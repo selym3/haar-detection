@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import utils.Scale;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
@@ -25,7 +26,9 @@ public class Main extends Application {
 			primaryStage.show();
 			
 			FXController controller = loader.getController();
-			controller.init();
+			Scale scale = new Scale(4,3);
+			scale.reScale(1.5);
+			controller.init(scale,0.05f);
 			
 			primaryStage.setOnCloseRequest((WindowEvent we) -> {
 				controller.setClosed();

@@ -13,6 +13,7 @@
             <Insets bottom="25" left="25" right="25" top="25" />
          </padding>
          <Button fx:id="button" alignment="center" onAction="#startCamera" text="Start Camera" />
+         <Button fx:id="toggle" alignment="center" onAction="#toggleTrack" text="Toggle Tracking" />
       </HBox>
    </bottom>
    <center>
