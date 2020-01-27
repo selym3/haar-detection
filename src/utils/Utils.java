@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
 
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -48,4 +50,18 @@ public final class Utils {
 		
 		return image;
 	}
+	
+	public static Rect largestRect(MatOfRect rects) {
+		Rect biggestRectangle = new Rect(0,0,0,0);
+		
+		for (Rect rect : rects.toArray()) {
+			if (rect.width * rect.height > biggestRectangle.width * biggestRectangle.height) {
+				biggestRectangle = rect;
+			}
+		}
+		
+		return biggestRectangle;
+	}
+	
+	
 }
