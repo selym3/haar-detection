@@ -1,4 +1,4 @@
-package default.webcam;
+package webcam;
 // --module-path "C:\Program Files\Java Libraries\javafx\lib" --add-modules javafx.controls,javafx.fxml
 
 import org.opencv.core.Core;
