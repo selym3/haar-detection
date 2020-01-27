@@ -6,6 +6,8 @@ import java.awt.image.DataBufferByte;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -63,5 +65,15 @@ public final class Utils {
 		return biggestRectangle;
 	}
 	
+	public static double clamp(double input, double min, double max) {
+		if (input < min) return min;
+		if (input > max) return max;
+		return input;
+	}
 	
+	public static Mat resize(Mat targetFace, Size size) {
+		Mat mat2return = new Mat();
+		Imgproc.resize(targetFace, mat2return, size);
+		return mat2return;
+	}
 }
