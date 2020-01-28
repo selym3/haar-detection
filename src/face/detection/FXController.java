@@ -64,8 +64,12 @@ public class FXController {
 			MatOfRect rects = new MatOfRect();
 			c.detectMultiScale(mat, rects, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE, new Size(absFaceSize,absFaceSize));
 		
-			return ratio.scaleRect(Utils.largestRect(rects));
-		}, faceCascade);
+			Rect rect = ratio.scaleRect(Utils.largestRect(rects));
+			rect.x = (int) Utils.clamp(rect.x,0,mat.width() - rect.width);
+			rect.y = (int) Utils.clamp(rect.y,0,mat.height() - rect.height);
+			
+			return rect;
+		}, faceCascade, faceCascade);
 		
 	}
 	
@@ -89,9 +93,7 @@ public class FXController {
 					
 					absFaceSize = grayFrame.height() * minArea;
 					
-					Rect targetFace = cascade.process(grayFrame);
-					targetFace.x = (int) Utils.clamp(targetFace.x,0,frame.width() - targetFace.width);
-					targetFace.y = (int) Utils.clamp(targetFace.y,0,frame.height() - targetFace.height);
+					Rect targetFace = cascade.process(grayFrame)[0];
 					
 					if (!tracking) {
 						Imgproc.rectangle(frame, targetFace.tl(), targetFace.br(),new Scalar(0,255,0),3);

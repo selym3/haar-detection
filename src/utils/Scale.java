@@ -75,6 +75,10 @@ public class Scale {
 	}
 	
 	public Rect scaleRect(Rect original) {
+		/*TODO:
+		 * Check if rectangle is in the desired proportion,
+		 * THEN change its proportions
+		 */
 		// Assume origin is in the center of the rectangle
 		int x = original.x + original.width/2;
 		int y = original.y + original.height/2;

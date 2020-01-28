@@ -1,5 +1,8 @@
 package utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.objdetect.CascadeClassifier;
@@ -13,19 +16,32 @@ import org.opencv.objdetect.CascadeClassifier;
  */
 public class CascadeFilter {
 	
-	private CascadeClassifier classifier;
+	private List<CascadeClassifier> classifierList;
 	private CascadeFunction lambda;
 	
-	public CascadeFilter(CascadeFunction lambda, CascadeClassifier filter) {	
+	public CascadeFilter(CascadeFunction lambda, CascadeClassifier... filters) {	
 		this.lambda = lambda;
-		if (filter.empty()) {
-			System.err.println(this.getClass().getName() + ": CascadeClassifier is empty");
-		} else { 
-			classifier = filter;
+		classifierList = new ArrayList<CascadeClassifier>();
+		
+		for (CascadeClassifier filter : filters) {
+			if (filter.empty()) {
+				System.err.println(this.getClass().getName() + ": CascadeClassifier not loaded");
+			} else {
+				classifierList.add(filter);
+			}
+		}
+		
+		if (classifierList.size() == 0) {
+			System.err.println(this.getClass().getName() + ": No valid CascadeClassifier found");
 		}
 	}
 	
-	public Rect process(Mat mat) {
-		return lambda.process(this.classifier, mat);
+	public Rect[] process(Mat mat) {
+		Rect[] results = new Rect[classifierList.size()];
+		for (int i = 0;i < results.length;i++) {
+			results[i] = lambda.process(classifierList.get(i),mat);
+		}
+		
+		return results;
 	}
 }
