@@ -1,6 +1,6 @@
 # haar-detection
 
-## src/webcame
+## src/webcam
 Webcam intake. 
 
 ## src/face/detection
