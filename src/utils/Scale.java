@@ -50,7 +50,7 @@ public class Scale {
 		}
 	}
 	
-	public void reScale(double bs) {
+	public Scale reScale(double bs) {
 		if (isWidth) {
 			double tempScale = ws/hs;
 			ws = bs;
@@ -60,9 +60,10 @@ public class Scale {
 			hs = bs;
 			ws = bs / tempScale;
 		}
+		return this;
 	}
 	
-	public void reBase(double bs) {
+	public Scale reBase(double bs) {
 		if (isWidth) {
 			double tempScale = ws/hs;
 			hs = bs;
@@ -72,6 +73,7 @@ public class Scale {
 			ws = bs;
 			hs = bs * tempScale;
 		}
+		return this;
 	}
 	
 	public Rect scaleRect(Rect original) {
