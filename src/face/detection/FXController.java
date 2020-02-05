@@ -20,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import utils.CascadeFilter;
 import utils.Scale;
 import utils.Utils;
 
@@ -44,6 +45,8 @@ public class FXController {
 	private double absFaceSize;
 	private Scale ratio; // ratio to transform 
 	
+	private CascadeFilter cascade;
+	
 	private float minArea;
 	
 	protected void init(Scale ratio, float minArea) {
@@ -56,6 +59,18 @@ public class FXController {
 		
 		this.ratio = ratio;
 		this.minArea = minArea;
+		
+		cascade = new CascadeFilter((CascadeClassifier c,Mat mat) -> {
+			MatOfRect rects = new MatOfRect();
+			c.detectMultiScale(mat, rects, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE, new Size(absFaceSize,absFaceSize));
+		
+			Rect rect = ratio.scaleRect(Utils.largestRect(rects));
+			rect.x = (int) Utils.clamp(rect.x,0,mat.width() - rect.width);
+			rect.y = (int) Utils.clamp(rect.y,0,mat.height() - rect.height);
+			
+			return rect;
+		}, faceCascade, faceCascade);
+		
 	}
 	
 	@FXML
@@ -76,18 +91,10 @@ public class FXController {
 					Imgproc.cvtColor(frame,grayFrame,Imgproc.COLOR_BGR2GRAY);
 					Imgproc.equalizeHist(grayFrame, grayFrame);
 					
-					if (absFaceSize == 0) {
-						int height = grayFrame.height();
-						absFaceSize = height * minArea;
-					}
+					absFaceSize = grayFrame.height() * minArea;
 					
-					MatOfRect faces = new MatOfRect();
-					faceCascade.detectMultiScale(grayFrame, faces, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE, new Size(absFaceSize,absFaceSize));
+					Rect targetFace = cascade.process(grayFrame)[0];
 					
-					Rect targetFace = ratio.scaleRect(Utils.largestRect(faces));
-					targetFace.x = (int) Utils.clamp(targetFace.x,0,frame.width() - targetFace.width);
-					targetFace.y = (int) Utils.clamp(targetFace.y,0,frame.height() - targetFace.height);
-										
 					if (!tracking) {
 						Imgproc.rectangle(frame, targetFace.tl(), targetFace.br(),new Scalar(0,255,0),3);
 					} else {
@@ -96,13 +103,12 @@ public class FXController {
 						}
 					}
 					
-					
 					Image imageToShow = Utils.mat2Image(frame);
 					updateImageView(currentFrame, imageToShow);
 				};
 				
 				timer = Executors.newSingleThreadScheduledExecutor();
-				timer.scheduleAtFixedRate(frameGrabber, 0, 33, TimeUnit.MILLISECONDS);
+				timer.scheduleAtFixedRate(frameGrabber, 0, 8, TimeUnit.MILLISECONDS);
 				
 				button.setText("Stop Camera");
 			}
@@ -153,6 +159,7 @@ public class FXController {
 	private void updateImageView(ImageView view, Image image) {
 		Utils.onFXThread(view.imageProperty(), image);
 	}
+	
 	
 	protected void setClosed() {
 		stopAcquisition();
