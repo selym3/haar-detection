@@ -69,7 +69,7 @@ public class FXController {
 			rect.y = (int) Utils.clamp(rect.y,0,mat.height() - rect.height);
 			
 			return rect;
-		}, faceCascade, faceCascade);
+		}, faceCascade);
 		
 	}
 	
