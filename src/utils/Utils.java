@@ -4,6 +4,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -47,5 +51,29 @@ public final class Utils {
 		System.arraycopy(sourcePixels, 0, targetPixels, 0, sourcePixels.length);
 		
 		return image;
+	}
+	
+	public static Rect largestRect(MatOfRect rects) {
+		Rect biggestRectangle = new Rect(0,0,0,0);
+		
+		for (Rect rect : rects.toArray()) {
+			if (rect.width * rect.height > biggestRectangle.width * biggestRectangle.height) {
+				biggestRectangle = rect;
+			}
+		}
+		
+		return biggestRectangle;
+	}
+	
+	public static double clamp(double input, double min, double max) {
+		if (input < min) return min;
+		if (input > max) return max;
+		return input;
+	}
+	
+	public static Mat resize(Mat targetFace, Size size) {
+		Mat mat2return = new Mat();
+		Imgproc.resize(targetFace, mat2return, size);
+		return mat2return;
 	}
 }
